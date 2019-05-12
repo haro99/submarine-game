@@ -1,9 +1,13 @@
 <?php
+    //ページフラグ
     $flag = 0;
+    //エラー表示配列
     $error = array();
+
+    //初回ではない場合
     if( !empty($_POST['push']) )
     {
-
+        //マップ、マイマップ、敵の数
         $map = $_POST['map'];
         $mymap = $_POST['mymap'];
         $enemy = (int)$_POST['enemy'];
@@ -11,15 +15,20 @@
 
         $error = validation($_POST);
 
+        //入力にエラーがない場合
         if( empty($error) )
         {
+            //魚雷を撃った結果表示、狙ったyとxの座標
             $report = array();
             $y = (int)$_POST['ypoint'];
             $x = (int)$_POST['xpoint'];
+
+            //狙った場所はまだ撃ってない場所か？
             if($mymap[$y][$x] == 'ー')
             {
                 $report[] = "座標". $y. "、". $x. "の位置に魚雷発射！";
 
+                //そこに敵がいたか？
                 if($map[$y][$x] == 1)
                 {
                     $report[] = "敵艦にヒット！";
@@ -40,6 +49,7 @@
     }
     else
     {
+        //初回時の処理
         $enemy = 3;
         $map = array(
             [0, 0, 0],
@@ -56,6 +66,8 @@
         {
             $y = rand(0, 2);
             $x = rand(0, 2);
+
+            //敵を配置したことない場所か？
             if($map[$y][$x] == 0)
             {
                 $map[$y][$x] = 1;
@@ -91,6 +103,7 @@
     }
     //var_dump($_POST);
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -118,7 +131,7 @@
         }
     ?>
     </table>
-    <!--エラー表示欄-->
+        <!--エラー表示欄-->
         <?php if( !empty($error) ): ?>
         <ul class="error">
         <?php foreach( $error as $value):?>
@@ -126,6 +139,7 @@
         <?php endforeach;?>
         </ul>
         <?php endif; ?>
+        <!--魚雷の結果表示欄-->
         <?php if( !empty($report) ): ?>
         <ul class="error">
         <?php foreach( $report as $value):?>
@@ -133,12 +147,14 @@
         <?php endforeach;?>
         </ul>
         <?php endif; ?>
+        <!--敵の残存数の表示-->
         <?php if( $enemy == 0): ?>
         <p>敵艦を全部撃破した！おめでとう！</p>
         <?php else:?>
         <p>敵艦残り<?php echo $enemy;?></p>
         <?php endif;?>
     <p>x座標とY座標を半角で入れてGOを押して発射！</p>
+    <!--入力フォーム-->
     <form action="" method="post">
         <p>ｘ座標<input type="text" name="xpoint"></p>
         <p>Ｙ座標<input type="text" name="ypoint"></p>
